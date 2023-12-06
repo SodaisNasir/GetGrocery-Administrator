@@ -4,47 +4,19 @@ import { useState, useEffect } from "react";
 import { convertPropsToObject, fetchData, modifyData } from "../utils";
 
 const neededProps = [
-  "id",
-  "person_name",
-  "company_tax_id",
-  "company_name",
-  "company_email",
-  "_password",
-  "_city",
-  "_company_address",
-  "_zip_code",
-  "status",
-  "package",
-  "_package_name",
-  "_package_id",
-  "_package_amount",
-  "_discount",
-  "_gst",
-  "_total",
+  { from: "category_id", to: "id" },
+  "category_name",
+  "image",
 ];
 const template = convertPropsToObject(neededProps);
-const showAllCategories = `${base_url}/get-categories.php`;
-const createUrl = `${base_url}/create-categories.php`;
-const editUrl = `${base_url}/edit-categories.php`;
-const blockUrl = `${base_url}/suspend-categories.php`;
-const deleteUrl = (data) => {
-  const formdata = new FormData();
-  const url = `${base_url}/delete-api/${data?.id}`;
-  const requestOptions = {
-    headers: {
-      accept: "application/json",
-    },
-    method: "POST",
-    body: formdata,
-    redirect: "follow",
-  };
-  return [url, requestOptions];
-};
+const showAllCategories = `${base_url}/fetch_category.php`;
+const createUrl = `${base_url}/create_category.php`;
+const editUrl = `${base_url}/edit_category.php`;
 
 const Categories = () => {
   const [, setSearchText] = useState("");
   const [data, setData] = useState(null);
-  const [packages, setPackages] = useState([]);
+  const [reload, setReload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [paginatedData, setPaginatedData] = useState({
     items: [],
@@ -71,16 +43,6 @@ const Categories = () => {
 
   const editModalTemplate = {
     id: "",
-    person_name: "",
-    company_tax_id: "",
-    company_name: "",
-    company_email: "",
-    _password: "",
-    _city: "",
-    _zip_code: "",
-    _package_id: "",
-    _company_address: "",
-    status: "",
   };
 
   const createModalTemplate = {
@@ -103,77 +65,51 @@ const Categories = () => {
   };
 
   const createCallback = (res) => {
-    const resData = modifyData(res?.success?.data, neededProps, true);
-    const newState = [resData, ...data];
-    setData(newState);
-    setPaginatedData((prev) => ({ ...prev, items: newState }));
+    // const resData = modifyData(res?.success?.data, neededProps, true);
+    // const newState = [resData, ...data];
+    // setData(newState);
+    // setPaginatedData((prev) => ({ ...prev, items: newState }));
 
-    console.log("response ===>", resData);
+    // console.log("response ===>", resData);
+    setReload(!reload);
   };
 
   const editCallback = (res, state) => {
-    const resData = modifyData(res?.success?.data, neededProps, true);
-    const selectedPackage = packages.find((e) => e.id == state._package_id);
-    resData._package_id = selectedPackage.id;
-    resData.package = selectedPackage.name;
-
-    const stateCopy = [...data].map((e) => (e.id === resData.id ? resData : e));
+    const stateCopy = data?.map((e) =>
+      e.id === state.id ? { ...e, ...state } : e
+    );
 
     setData(stateCopy);
     setPaginatedData((prev) => ({ ...prev, items: stateCopy }));
-    console.log("response ===>", resData);
   };
 
-  const dropdownFields = [
+  const uploadFields = [
     {
-      key: "_package_id",
-      title: "package",
-      arr: packages,
-      getOption: (val) => val?.name,
-      getValue: (val) => val?.id,
-      onChange: (key, value, setState) => {
-        const package_data = packages.find((e) => e.id == value);
+      key: "image",
+      title: "image",
+    },
+  ];
 
-        console.log("package_data", package_data);
-
-        setState((prev) => {
-          const gst = Number(prev.gst || 0);
-          const price = Number(package_data?.price || 0);
-          const discount = Number(prev.discount || 0);
-          const discountedPrice = discount
-            ? price - (price / 100) * discount
-            : price;
-          let total = gst
-            ? discountedPrice + (discountedPrice / 100) * gst
-            : discountedPrice;
-          total = total || "0";
-          console.log("==>", gst, price, discount, total);
-
-          return {
-            ...prev,
-            [key]: value,
-            _package_name: package_data?.name,
-            _package_amount: package_data?.price,
-            _total: total,
-          };
-        });
+  const appendableFields = [
+    {
+      key: "id",
+      appendFunc: (key, value, formdata) => {
+        formdata.append("slider_id", value);
       },
     },
     {
-      key: "status",
-      title: "status",
-      arr: ["Active", "InActive"],
-      getOption: (val) => val,
+      key: "image_url",
+      appendFunc: (key, value, formdata) => {
+        formdata.append("fileToUpload", value);
+      },
     },
   ];
 
   const props = {
     title: "Categories",
-    actionCols: ["View", "Edit", "Delete", "Block/Unblock"],
+    actionCols: ["Edit"],
     data,
     setData,
-    blockUrl,
-    deleteUrl,
     template,
     isLoading,
     search: {
@@ -187,8 +123,8 @@ const Categories = () => {
       curLength: paginatedData.items.length,
     },
     createModalProps: {
-      disabledFields: ["total"],
-      textAreaFields: ["_company_address"],
+      uploadFields,
+      appendableFields,
       excludeFields: ["id", "created_at", "updated_at"],
       hideFields: ["_package_name", "_package_amount"],
       dropdownFields,
@@ -198,64 +134,18 @@ const Categories = () => {
       successCallback: createCallback,
     },
     editModalProps: {
-      disabledFields: ["total"],
-      textAreaFields: ["_company_address"],
+      uploadFields,
+      appendableFields,
       excludeFields: ["id", "created_at", "updated_at", "status", "_password"],
-      dropdownFields: [
-        {
-          key: "_package_id",
-          title: "package",
-          arr: packages,
-          getOption: (val) => val?.name,
-          getValue: (val) => val?.id,
-          // defaultValue: (state) => state?.package?.id,
-        },
-      ],
+      dropdownFields,
       neededProps,
       editUrl,
       successCallback: editCallback,
       template: editModalTemplate,
     },
-    viewModalProps: {
-      excludeFields: [
-        "created_at",
-        "updated_at",
-        "_password",
-        "_package_amount",
-        "_package_id",
-        "_package_name",
-        "_total",
-        "_gst",
-        "_discount",
-        "role",
-      ],
-      longFields: ["_company_address"],
-    },
   };
 
   useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const requestOptions = {
-          headers: {
-            accept: "application/json",
-          },
-          method: "GET",
-          redirect: "follow",
-        };
-
-        const res = await fetch(`${base_url}/get-package`, requestOptions);
-        const json = await res.json();
-
-        if (json.success) {
-          const data = json.success.data;
-          setPackages(data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchData({
       neededProps,
       url: showAllCategories,
@@ -266,8 +156,6 @@ const Categories = () => {
         setPaginatedData((prev) => ({ ...prev, items: data }));
       },
     });
-
-    fetchPackages();
   }, []);
 
   return <GeneralPage {...props} />;

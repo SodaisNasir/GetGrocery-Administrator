@@ -19,15 +19,6 @@ const createUrl = `${base_url}/generate_slider.php`;
 const editUrl = `${base_url}/edit_slider.php`;
 const getProducts = `${base_url}/get_products.php`;
 
-const dropdownFields = [
-  {
-    key: "status",
-    title: "status",
-    arr: ["Active", "InActive"],
-    getOption: (val) => val,
-  },
-];
-
 const SlidesManagement = () => {
   const { user } = useContext(AppContext);
   const [data, setData] = useState(null);
@@ -68,8 +59,15 @@ const SlidesManagement = () => {
     "product_id",
     "image",
     "type",
-    "link",
   ]);
+
+  const editModalState = {
+    id: "",
+    product_id: "",
+    image: "",
+    type: "",
+    link: "",
+  };
 
   const createCallback = (res) => {
     // const resData = res?.success?.data;
@@ -112,6 +110,16 @@ const SlidesManagement = () => {
     },
   ];
 
+  const inputFields = [
+    {
+      key: "type",
+      title: "type",
+      arr: products,
+      getOption: (val) => val?.id,
+      getValue: (val) => val?.id,
+    },
+  ];
+
   const props = {
     title: "Slides Management",
     actionCols: ["Edit"],
@@ -130,9 +138,9 @@ const SlidesManagement = () => {
       curLength: paginatedData.items.length,
     },
     createModalProps: {
-      excludeFields: ["created_at", "updated_at", "product_id"],
-      hideFields: ["id"],
-      dropdownFields,
+      excludeFields: ["created_at", "updated_at"],
+      hideFields: ["id", "product_id", "link"],
+      inputFields,
       neededProps,
       uploadFields,
       createUrl,
@@ -143,14 +151,14 @@ const SlidesManagement = () => {
       appendableFields,
     },
     editModalProps: {
-      excludeFields: ["created_at", "updated_at", "product_id"],
-      hideFields: ["id"],
-      dropdownFields,
+      excludeFields: ["created_at", "updated_at"],
+      hideFields: ["id", "product_id", "link"],
+      inputFields,
       uploadFields,
       neededProps,
       editUrl,
       successCallback: editCallback,
-      template: modalState,
+      template: editModalState,
       gridCols: 1,
       token: user?.token,
       appendableFields,
@@ -168,7 +176,7 @@ const SlidesManagement = () => {
         console.log("products json =>", json);
 
         if (json.status) {
-          setProducts(json.data);
+          setProducts(json?.data?.products);
         }
       } catch (error) {
         console.error(error);

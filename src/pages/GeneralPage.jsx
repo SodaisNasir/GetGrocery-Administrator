@@ -105,11 +105,18 @@ const GeneralPage = ({
         {/* Modals */}
         {createModal.isOpen && (
           <CreateModal
-            {...{ createModal, setCreateModal, ...createModalProps }}
+            {...{
+              createModal,
+              setCreateModal,
+              ...createModalProps,
+              page: title,
+            }}
           />
         )}
         {editModal.isOpen && (
-          <EditModal {...{ editModal, setEditModal, ...editModalProps }} />
+          <EditModal
+            {...{ editModal, setEditModal, ...editModalProps, page: title }}
+          />
         )}
         {viewModal.isOpen && (
           <ViewModal {...{ viewModal, setViewModal, ...viewModalProps }} />

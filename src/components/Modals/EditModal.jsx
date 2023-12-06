@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { VscClose } from "react-icons/vsc";
 import Button from "../Buttons/Button";
 import { getInputType } from "../../utils";
-import { DropdownField, TextArea, UploadField } from "../Fields";
+import {
+  DropdownField,
+  TextArea,
+  TypeFieldCategories,
+  UploadField,
+} from "../Fields";
 import toast from "react-hot-toast";
 
 const EditModal = ({
@@ -13,13 +18,16 @@ const EditModal = ({
   excludeFields = ["id"],
   textAreaFields = ["address"],
   dropdownFields = [],
+  disabledFields = [],
   uploadFields = [],
+  inputFields = [],
   hideFields = [],
   required = false,
   neededProps,
   successCallback,
   template,
   token,
+  page,
 }) => {
   const initialState = editModal.data;
   const [state, setState] = useState(initialState);
@@ -27,6 +35,7 @@ const EditModal = ({
 
   console.log("state", state);
 
+  const inputKeys = inputFields.map((e) => e.key);
   const uploadKeys = uploadFields.map((e) => e.key);
   const dropdownKeys = dropdownFields.map((e) => e.key);
 
@@ -149,6 +158,22 @@ const EditModal = ({
                     gridCols,
                     state: state[elem],
                     setState,
+                    required,
+                  }}
+                />
+              );
+            } else if (elem === "type" && page === "Slides Management") {
+              const index = inputKeys.indexOf(elem);
+              const data = index !== -1 ? inputFields[index] : {};
+
+              return (
+                <TypeFieldCategories
+                  {...{
+                    ...data,
+                    keyName: elem,
+                    state: state,
+                    setState,
+                    disabled: disabledFields.includes(elem),
                     required,
                   }}
                 />

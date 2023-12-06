@@ -19,12 +19,12 @@ export const navLinks = [
     path: "/slides-management",
     title: "Slides Management",
   },
-  // {
-  //   icon: <BiSolidCategoryAlt className="-ml-0.5 text-xl" title="Slides" />,
-  //   id: 2,
-  //   path: "/categories",
-  //   title: "Categories",
-  // },
+  {
+    icon: <BiSolidCategoryAlt className="-ml-0.5 text-xl" title="Slides" />,
+    id: 2,
+    path: "/categories",
+    title: "Categories",
+  },
   // {
   //   icon: <GoHomeFill className="-ml-0.5 text-xl" title="Invoices" />,
   //   id: 3,

@@ -92,7 +92,7 @@ const Router = () => {
               path="/slides-management"
               element={privateRoutes(SlidesManagement)}
             />
-            {/* <Route path="/categories" element={privateRoutes(Categories)} /> */}
+            <Route path="/categories" element={privateRoutes(Categories)} />
             {/* <Route path="/packages" element={privateRoutes(Packages)} /> */}
             {/* <Route path="/jobs" element={privateRoutes(Jobs)} /> */}
             {/* <Route
