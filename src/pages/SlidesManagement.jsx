@@ -17,6 +17,7 @@ const template = convertPropsToObject(neededProps);
 const showAllSlides = `${base_url}/fetch_slider.php`;
 const createUrl = `${base_url}/generate_slider.php`;
 const editUrl = `${base_url}/edit_slider.php`;
+const getProducts = `${base_url}/get_products.php`;
 
 const dropdownFields = [
   {
@@ -33,6 +34,7 @@ const SlidesManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [, setSearchText] = useState("");
   const [reload, setReload] = useState(false);
+  const [products, setProducts] = useState(null);
   const [paginatedData, setPaginatedData] = useState({
     items: [],
     curItems: [],
@@ -154,12 +156,25 @@ const SlidesManagement = () => {
       appendableFields,
     },
     tableProps: {
-      dollarFields: ["price"],
       linkFields: ["link"],
     },
   };
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(getProducts);
+        const json = await res.json();
+        console.log("products json =>", json);
+
+        if (json.status) {
+          setProducts(json.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const formdata = new FormData();
     formdata.append("token", user?.token);
     const requestOptions = {
@@ -182,6 +197,7 @@ const SlidesManagement = () => {
       },
       requestOptions,
     });
+    fetchProducts();
   }, [user, reload]);
 
   return <GeneralPage {...props} />;
