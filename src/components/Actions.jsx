@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { AiFillEye, AiFillFileImage, AiFillFolderOpen } from "react-icons/ai";
 import { TbDiscountCheckFilled } from "react-icons/tb";
-import { CgUnblock } from "react-icons/cg";
+import { CgDetailsMore, CgUnblock } from "react-icons/cg";
 import { MdBlock, MdDelete, MdModeEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { BsBoxArrowInUpRight, BsFillImageFill } from "react-icons/bs";
+import { BiSolidCategoryAlt } from "react-icons/bi";
+import { GiVerticalBanner } from "react-icons/gi";
 
 const Actions = ({
   id,
@@ -19,6 +22,7 @@ const Actions = ({
   blockUrl,
   deleteUrl,
 }) => {
+  const navigate = useNavigate();
   const [blockUser, setBlockUser] = useState(
     data?.status?.toLowerCase() === "inactive"
   );
@@ -40,10 +44,10 @@ const Actions = ({
       );
 
       if (res.status === 200) {
-        setData((prev) => prev.filter((e) => e.id !== id));
+        setData((prev) => prev.filter((e) => (e.id ?? e._id) !== id));
         setPaginatedData((prev) => ({
           ...prev,
-          items: prev.items.filter((e) => e.id !== id),
+          items: prev.items.filter((e) => (e.id ?? e._id) !== id),
         }));
       }
     } catch (err) {
@@ -128,6 +132,28 @@ const Actions = ({
           </button>
         </td>
       );
+    } else if (name === "Banners") {
+      element = (
+        <td className="self-center px-6 py-2 pt-4 text-xl text-center">
+          <button
+            onClick={() => navigate("/category/" + data?.id)}
+            className="font-medium text-gray-600 hover:text-gray-800"
+          >
+            <BsFillImageFill />
+          </button>
+        </td>
+      );
+    } else if (name === "Assign") {
+      element = (
+        <td className="self-center px-6 py-2 pt-4 text-xl text-center">
+          <button
+            onClick={() => navigate("/assign-category/" + data?.id)}
+            className="font-medium text-gray-600 hover:text-gray-800"
+          >
+            <BiSolidCategoryAlt />
+          </button>
+        </td>
+      );
     } else if (name === "Media") {
       element = (
         <td className="self-center px-6 py-2 pt-4 text-lg text-center">
@@ -164,25 +190,6 @@ const Actions = ({
           >
             <MdDelete />
           </button>
-        </td>
-      );
-    } else if (name === "Mark Paid") {
-      element = (
-        <td className="self-center px-3 py-1 pt-3 text-2xl text-center">
-          {data.status === "Paid" ? (
-            <TbDiscountCheckFilled
-              className="mx-auto text-blue-600"
-              title="Invoice Paid"
-            />
-          ) : (
-            <button
-              onClick={() => setMarkPaidModal({ data, isOpen: true })}
-              className="text-gray-600 hover:text-gray-800"
-              title="Mark as Paid"
-            >
-              <TbDiscountCheckFilled />
-            </button>
-          )}
         </td>
       );
     } else if (name === "Block/Unblock") {

@@ -30,7 +30,7 @@ const Account = ({ toggle, setToggle }) => {
     {
       title: "Change Password",
       icon: <MdLock className="text-base text-blue-500" />,
-      clickHandler: () => navigate("/change-password"),
+      clickHandler: () => false && navigate("/change-password"),
     },
     {
       title: "Edit Profile",

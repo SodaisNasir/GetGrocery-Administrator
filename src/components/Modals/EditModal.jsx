@@ -17,6 +17,7 @@ const EditModal = ({
   gridCols = 2,
   excludeFields = ["id"],
   textAreaFields = ["address"],
+  appendableFields = [],
   dropdownFields = [],
   disabledFields = [],
   uploadFields = [],
@@ -51,14 +52,20 @@ const EditModal = ({
 
     try {
       const formdata = new FormData();
+      const appendableKeys = appendableFields.map((e) => e.key);
       keys.forEach((item, indx) => {
         let key = neededProps.find(
           (elem) => elem?.to === item || elem === item
         );
         key = typeof key === "object" ? key.from : key?.replace(/^_/, "");
 
+        if (appendableKeys.includes(key)) {
+          const data = appendableFields?.[appendableKeys.indexOf(key)];
+          data?.appendFunc(key, state[item], formdata);
+        } else {
+          formdata.append(key, state[item]);
+        }
         console.log(key, state[item]);
-        formdata.append(key, state[item]);
       });
       formdata.append("token", token);
 
@@ -82,9 +89,10 @@ const EditModal = ({
       if (json.status) {
         successCallback && successCallback(json, state);
         close();
-      } else if (json.error) {
+      } else if (!json.status) {
         toast.error(
-          json?.error?.message ||
+          json?.message ||
+            json?.error?.message ||
             json?.error[0]?.message ||
             "Unable to update!",
           { duration: 2000 }

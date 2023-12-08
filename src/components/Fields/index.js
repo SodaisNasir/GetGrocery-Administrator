@@ -192,7 +192,7 @@ export const TypeFieldCategories = ({
               setState((prev) => ({
                 ...prev,
                 link: e.target.value,
-                product_id: null,
+                product_id: "",
               }))
             }
             required={required}
@@ -214,7 +214,7 @@ export const TypeFieldCategories = ({
               setState((prev) => ({
                 ...prev,
                 product_id: e.target.value,
-                link: null,
+                link: "",
               }))
             }
             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"

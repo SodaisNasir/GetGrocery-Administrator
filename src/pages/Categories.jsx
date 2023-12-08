@@ -1,15 +1,15 @@
 import GeneralPage from "./GeneralPage";
 import { base_url } from "../utils/url";
 import { useState, useEffect } from "react";
-import { convertPropsToObject, fetchData, modifyData } from "../utils";
+import { convertPropsToObject, fetchData } from "../utils";
 
 const neededProps = [
   { from: "category_id", to: "id" },
   "category_name",
-  "image",
+  { from: "image_url", to: "image" },
 ];
 const template = convertPropsToObject(neededProps);
-const showAllCategories = `${base_url}/fetch_category.php`;
+const showAllCategories = `${base_url}/get_categories.php`;
 const createUrl = `${base_url}/create_category.php`;
 const editUrl = `${base_url}/edit_category.php`;
 
@@ -32,10 +32,10 @@ const Categories = () => {
     } else {
       setPaginatedData((prev) => ({
         ...prev,
-        items: data.filter((item) =>
-          Object.keys(template).some((key) =>
-            String(item?.[key])?.toLowerCase()?.includes(str?.toLowerCase())
-          )
+        items: data.filter(
+          (item) =>
+            item?.category_name?.toLowerCase()?.includes(str?.toLowerCase()) ||
+            String(item?.id)?.toLowerCase()?.includes(str?.toLowerCase())
         ),
       }));
     }
@@ -43,25 +43,13 @@ const Categories = () => {
 
   const editModalTemplate = {
     id: "",
+    category_name: "",
+    image: "",
   };
 
   const createModalTemplate = {
-    id: "",
-    person_name: "",
-    company_tax_id: "",
-    company_name: "",
-    company_email: "",
-    _password: "",
-    _city: "",
-    _company_address: "",
-    _zip_code: "",
-    _package_name: "",
-    _package_id: "",
-    _package_amount: "",
-    _discount: "0",
-    _gst: "0",
-    status: "",
-    _total: "",
+    category_name: "",
+    image: "",
   };
 
   const createCallback = (res) => {
@@ -94,7 +82,7 @@ const Categories = () => {
     {
       key: "id",
       appendFunc: (key, value, formdata) => {
-        formdata.append("slider_id", value);
+        formdata.append("category_id", value);
       },
     },
     {
@@ -107,7 +95,7 @@ const Categories = () => {
 
   const props = {
     title: "Categories",
-    actionCols: ["Edit"],
+    actionCols: ["Banners", "Assign", "Edit"],
     data,
     setData,
     template,
@@ -115,7 +103,7 @@ const Categories = () => {
     search: {
       type: "text",
       onChange: search,
-      placeholder: "Search by Name, Email, Phone, Address...",
+      placeholder: "Search by Category Name and ID",
     },
     pagination: {
       paginatedData,
@@ -123,25 +111,25 @@ const Categories = () => {
       curLength: paginatedData.items.length,
     },
     createModalProps: {
+      createUrl,
+      neededProps,
       uploadFields,
       appendableFields,
       excludeFields: ["id", "created_at", "updated_at"],
-      hideFields: ["_package_name", "_package_amount"],
-      dropdownFields,
-      neededProps,
-      createUrl,
+      hideFields: [],
       initialState: createModalTemplate,
       successCallback: createCallback,
+      gridCols: 1,
     },
     editModalProps: {
+      editUrl,
+      neededProps,
       uploadFields,
       appendableFields,
-      excludeFields: ["id", "created_at", "updated_at", "status", "_password"],
-      dropdownFields,
-      neededProps,
-      editUrl,
+      excludeFields: ["id", "created_at", "updated_at"],
       successCallback: editCallback,
       template: editModalTemplate,
+      gridCols: 1,
     },
   };
 
@@ -156,7 +144,7 @@ const Categories = () => {
         setPaginatedData((prev) => ({ ...prev, items: data }));
       },
     });
-  }, []);
+  }, [reload]);
 
   return <GeneralPage {...props} />;
 };

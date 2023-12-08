@@ -12,6 +12,8 @@ import {
   AccessDenied,
   Categories,
   SlidesManagement,
+  Category,
+  AssignCategories,
 } from "../pages";
 import { base_url } from "../utils/url";
 
@@ -93,6 +95,11 @@ const Router = () => {
               element={privateRoutes(SlidesManagement)}
             />
             <Route path="/categories" element={privateRoutes(Categories)} />
+            <Route path="/category/:id" element={privateRoutes(Category)} />
+            <Route
+              path="/assign-category/:id"
+              element={privateRoutes(AssignCategories)}
+            />
             {/* <Route path="/packages" element={privateRoutes(Packages)} /> */}
             {/* <Route path="/jobs" element={privateRoutes(Jobs)} /> */}
             {/* <Route

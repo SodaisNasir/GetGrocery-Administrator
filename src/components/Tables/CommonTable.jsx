@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Actions from "../Actions";
-import { image_base_url } from "../../utils/url";
+import {
+  Image_BaseUrl_category_images,
+  baseUrl_category_banner_images,
+  image_base_url,
+} from "../../utils/url";
 
 const CommonTable = ({
   template,
@@ -13,11 +17,22 @@ const CommonTable = ({
   dollarFields = [],
   hideFields = [],
   linkFields = [],
+  title,
 }) => {
   const keys = Object.keys(template).filter((e) => !excludeFields.includes(e));
 
   const removeUnderscore = (str) =>
     str.replace(/^.|_./g, (match) => match.toUpperCase()).replace(/_/g, " ");
+
+  const imageBaseUrl = useMemo(() => {
+    if (title === "Categories") {
+      return Image_BaseUrl_category_images;
+    } else if (title === "Category Banners") {
+      return baseUrl_category_banner_images;
+    } else {
+      return image_base_url;
+    }
+  }, [title]);
 
   return (
     <>
@@ -62,7 +77,7 @@ const CommonTable = ({
                         className="px-6 py-4 text-xs text-center whitespace-nowrap md:whitespace-normal"
                       >
                         <img
-                          src={image_base_url + data[key]}
+                          src={imageBaseUrl + data[key]}
                           alt={key}
                           className="object-cover object-center h-10 mx-auto origin-center"
                         />
@@ -158,7 +173,7 @@ const CommonTable = ({
                       {...{
                         data,
                         setData: setState,
-                        id: data.id,
+                        id: data.id ?? data._id,
                         actionCols,
                         ...props,
                       }}

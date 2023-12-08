@@ -40,15 +40,13 @@ const SlidesManagement = () => {
     } else {
       setPaginatedData((prev) => ({
         ...prev,
-        items: data.filter((item) =>
-          Object.keys(template).some(
-            (key) =>
-              item?.type?.toLowerCase()?.includes(str?.toLowerCase()) ||
-              item?.link?.toLowerCase()?.includes(str?.toLowerCase()) ||
-              String(item?.product_id)
-                ?.toLowerCase()
-                ?.includes(str?.toLowerCase())
-          )
+        items: data.filter(
+          (item) =>
+            item?.type?.toLowerCase()?.includes(str?.toLowerCase()) ||
+            item?.link?.toLowerCase()?.includes(str?.toLowerCase()) ||
+            String(item?.product_id)
+              ?.toLowerCase()
+              ?.includes(str?.toLowerCase())
         ),
       }));
     }
@@ -80,12 +78,13 @@ const SlidesManagement = () => {
   };
 
   const editCallback = (res, state) => {
-    const stateCopy = data?.map((e) =>
-      e.id === state.id ? { ...e, ...state } : e
-    );
+    // const stateCopy = data?.map((e) =>
+    //   e.id === state.id ? { ...e, ...state } : e
+    // );
 
-    setData(stateCopy);
-    setPaginatedData((prev) => ({ ...prev, items: stateCopy }));
+    // setData(stateCopy);
+    // setPaginatedData((prev) => ({ ...prev, items: stateCopy }));
+    setReload(!reload);
   };
 
   const uploadFields = [
@@ -115,7 +114,7 @@ const SlidesManagement = () => {
       key: "type",
       title: "type",
       arr: products,
-      getOption: (val) => val?.id,
+      getOption: (val) => val?.name?.[0]?.value,
       getValue: (val) => val?.id,
     },
   ];

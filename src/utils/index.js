@@ -73,7 +73,7 @@ export const fetchData = async ({
   requestOptions,
   setIsLoading,
 }) => {
-  setIsLoading(true);
+  setIsLoading && setIsLoading(true);
   try {
     const res = await fetch(url, requestOptions || undefined);
     const json = await res.json();
@@ -95,6 +95,6 @@ export const fetchData = async ({
   } catch (err) {
     console.error(err);
   } finally {
-    setIsLoading(false);
+    setIsLoading && setIsLoading(false);
   }
 };

@@ -11,6 +11,7 @@ import {
   ViewModal,
 } from "../components";
 import { BiSearch } from "react-icons/bi";
+import AssignCategories from "./AssignCategories";
 
 const GeneralPage = ({
   title,
@@ -20,6 +21,7 @@ const GeneralPage = ({
   pagination,
   setData,
   isLoading,
+  // assignCategoriesProps = {},
   markPaidModalProps = {},
   createModalProps = {},
   editModalProps = {},
@@ -28,6 +30,8 @@ const GeneralPage = ({
   blockUrl,
   deleteUrl,
   search,
+  enableHeader = true,
+  enableAccount = true,
 }) => {
   const [editModal, setEditModal] = useState({ isOpen: false, data: null });
   const [createModal, setCreateModal] = useState({
@@ -52,7 +56,11 @@ const GeneralPage = ({
   };
 
   return (
-    <Page title={title} enableHeader>
+    <Page
+      title={title}
+      enableHeader={enableHeader}
+      enableAccount={enableAccount}
+    >
       <div className="flex items-center justify-between mb-2 space-x-2">
         {/* Search bar start */}
         <label htmlFor="table-search" className="sr-only">
@@ -85,6 +93,7 @@ const GeneralPage = ({
         ) : (
           <CommonTable
             {...{
+              title,
               template,
               state: pagination?.paginatedData?.curItems,
               setState: setData,

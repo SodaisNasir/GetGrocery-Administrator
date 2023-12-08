@@ -71,6 +71,8 @@ const CreateModal = ({
         } else {
           formdata.append(key, state[item]);
         }
+
+        console.log(key, state[item]);
       });
       formdata.append("token", token);
 
@@ -91,6 +93,14 @@ const CreateModal = ({
       if (json.status) {
         successCallback && successCallback(json, state);
         close();
+      } else if (!json.status) {
+        toast.error(
+          json?.message ||
+            json?.error?.message ||
+            json?.error[0]?.message ||
+            "Unable to create!",
+          { duration: 2000 }
+        );
       }
     } catch (error) {
       toast.error("Unable to create!", { duration: 2000 });
