@@ -5,7 +5,12 @@ import { AppContext } from "../context";
 import { useParams } from "react-router-dom";
 import GeneralPage from "./GeneralPage";
 
-const neededProps = ["category_id", "sub_category_id", "sub_category_name"];
+const neededProps = [
+  "category_id",
+  "image",
+  "sub_category_id",
+  "sub_category_name",
+];
 const template = convertPropsToObject(neededProps);
 const showAllCategory = `${base_url}/get_assigned_sub_categories.php`;
 const showAllSubCategory = `${base_url}/get_sub_categories.php`;
@@ -70,6 +75,7 @@ const AssignCategories = () => {
 
   const createModalTemplate = {
     sub_category_id: "",
+    image: "",
   };
 
   const createCallback = (res) => {
@@ -87,6 +93,12 @@ const AssignCategories = () => {
         formdata.append("sub_category_name", subCat.name?.[0]?.value);
       },
     },
+    {
+      key: "image",
+      appendFunc: (key, value, formdata) => {
+        formdata.append("fileToUpload", value);
+      },
+    },
   ];
 
   const dropdownFields = [
@@ -96,6 +108,13 @@ const AssignCategories = () => {
       arr: subCategories,
       getOption: (val) => val?.name?.[0]?.value,
       getValue: (val) => val?.id,
+    },
+  ];
+
+  const uploadFields = [
+    {
+      key: "image",
+      title: "Image",
     },
   ];
 
@@ -120,7 +139,8 @@ const AssignCategories = () => {
     createModalProps: {
       createUrl,
       neededProps,
-      hideFields: [],
+      // hideFields: [],
+      uploadFields,
       dropdownFields,
       appendableFields,
       excludeFields: ["id", "created_at", "updated_at"],

@@ -3,6 +3,7 @@ import Actions from "../Actions";
 import {
   Image_BaseUrl_category_images,
   baseUrl_category_banner_images,
+  baseUrl_sub_category_images,
   image_base_url,
 } from "../../utils/url";
 
@@ -29,6 +30,8 @@ const CommonTable = ({
       return Image_BaseUrl_category_images;
     } else if (title === "Category Banners") {
       return baseUrl_category_banner_images;
+    } else if (title === "Assign Categories") {
+      return baseUrl_sub_category_images;
     } else {
       return image_base_url;
     }

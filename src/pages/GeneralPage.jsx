@@ -11,7 +11,6 @@ import {
   ViewModal,
 } from "../components";
 import { BiSearch } from "react-icons/bi";
-import AssignCategories from "./AssignCategories";
 
 const GeneralPage = ({
   title,
